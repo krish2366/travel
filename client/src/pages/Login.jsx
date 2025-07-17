@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, Plane, MapPin, Camera } from "lucide-react";
+import axios from "axios";
+// import { useAuthStore } from "../store/useAuthStore";
 
 export default function TravelLoginPage() {
+
+  // const {login, setUser} = useAuthStore();
+
+  const navigate = useNavigate()
+
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,11 +34,31 @@ export default function TravelLoginPage() {
 
     setIsLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      
+      const payload = {
+        email,
+        password,
+      }
 
-    alert("Login successful! Welcome to your travel dashboard.");
-    setIsLoading(false);
+      const response = await axios.post("http://localhost:5000/users/login", payload );
+
+      console.log(response);
+      if (response.status === 200 && response.data?.accessToken) {
+        alert("Login successful!");
+        localStorage.setItem("accessToken", response.data.accessToken);
+        login(response.data.accessToken);
+        setUser(response.data.user);
+        navigate("/");
+      } else {
+        alert(error?.response?.data?.message || error?.message || 'An error occurred while creating your account');
+      }
+
+    } catch (error) {
+      alert(error.message || "An error occurred while logging in");
+    }finally{
+      setIsLoading(false);
+    }
   };
 
   const backgroundImages = [
@@ -144,30 +171,6 @@ export default function TravelLoginPage() {
                   </button>
                 </div>
               </div>
-
-              {/* Remember Me & Forgot Password */}
-              {/* <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor="remember-me"
-                    className="ml-2 block text-sm text-gray-700"
-                  >
-                    Remember me
-                  </label>
-                </div>
-                <a
-                  href="#"
-                  className="text-sm text-blue-600 hover:text-blue-500 transition-colors"
-                >
-                  Forgot password?
-                </a>
-              </div> */}
 
               {/* Submit Button */}
               <button

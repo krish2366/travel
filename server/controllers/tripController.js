@@ -1,5 +1,5 @@
 const { cloudinary } = require("../storage/cloudinary");
-const Trip = require("../models/trip");
+const Trip = require("../models/Trip");
 
 
 

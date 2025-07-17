@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    googleId: { type: String, unique: true },
+    googleId: { type: String, sparse: true, unique: true },
     password: { type: String, unique: true },
     role: { type: String, enum: ["traveler", "admin"], default: "traveler" },
   },
@@ -13,7 +13,9 @@ const userSchema = new mongoose.Schema(
     timestamps: true 
 });
 
-userSchema.methods.getJWTToken = function (expiresIn , jwtSecret){
+const User = mongoose.model("User", userSchema);
+
+User.prototype.getJWTToken = function (expiresIn , jwtSecret){
   return jwt.sign(
     { id: this._id, role: this.role }, 
     jwtSecret, 
@@ -21,4 +23,4 @@ userSchema.methods.getJWTToken = function (expiresIn , jwtSecret){
   );
 }
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = User;

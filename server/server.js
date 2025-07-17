@@ -10,8 +10,11 @@ app.use(cors());
 app.use(express.json());
 
 
-app.use('/api/users', userRoutes);
-app.use('/api/trips', tripRoutes);
+app.use('/users', userRoutes);
+app.use('/trips', tripRoutes);
+app.get("/",()=> {
+    console.log("Welcome to the Travel App API");
+})
 
 connectDB();
 app.listen(config.port, () => {

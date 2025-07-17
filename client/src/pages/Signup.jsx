@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, Plane, MapPin, Camera, Star, Globe, Heart } from 'lucide-react';
 
 export default function TravelSignupPage() {
+
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,7 +28,7 @@ export default function TravelSignupPage() {
   };
 
   const handleSubmit = async () => {
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
+    if (!formData.firstName || !formData.email || !formData.password) {
       alert('Please fill in all required fields');
       return;
     }
@@ -34,17 +39,38 @@ export default function TravelSignupPage() {
     }
     
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    alert('Account created successfully! Welcome to your travel adventure.');
-    setIsLoading(false);
+
+    try {
+      const payload = {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        password: formData.password,
+      }
+
+      const response = await axios.post("http://localhost:5000/users/register", payload);
+
+      console.log(response);
+      
+      if(response.status === 201 && response.data?.accessToken) {
+        alert('Account created successfully!');
+        localStorage.setItem('accessToken', response.data.accessToken);
+        navigate('/');
+
+      }else{
+        alert(error?.response?.data?.message || error?.message || 'An error occurred while creating your account');
+      }
+
+    } catch (error) {
+      alert(error.message || 'An error occurred while creating your account');
+    }finally{
+      setIsLoading(false);
+    }
+
   };
 
   const nextStep = () => {
     if (currentStep === 1) {
-      if (!formData.firstName || !formData.lastName || !formData.email) {
+      if (!formData.firstName || !formData.email) {
         alert('Please fill in all fields to continue');
         return;
       }
@@ -166,7 +192,7 @@ export default function TravelSignupPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        First Name
+                        First Name *
                       </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -188,7 +214,6 @@ export default function TravelSignupPage() {
                       </label>
                       <input
                         type="text"
-                        required
                         value={formData.lastName}
                         onChange={(e) => handleInputChange('lastName', e.target.value)}
                         className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
@@ -200,7 +225,7 @@ export default function TravelSignupPage() {
                   {/* Email Input */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Address
+                      Email Address *
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -216,25 +241,6 @@ export default function TravelSignupPage() {
                       />
                     </div>
                   </div>
-
-                  {/* Phone Input */}
-                  {/* <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone Number (Optional)
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Phone className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
-                        placeholder="+1 (555) 123-4567"
-                      />
-                    </div>
-                  </div> */}
 
                   {/* Next Button */}
                   <button
