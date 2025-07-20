@@ -31,9 +31,12 @@ import {
   ArrowRight
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { useAuthStore } from '../store/useAuthStore';
 
 export default function Dashboard() {
 
+  const {user} = useAuthStore();
+  console.log(user);
   const [activeTab, setActiveTab] = useState('flights');
   const [searchData, setSearchData] = useState({
     from: '',

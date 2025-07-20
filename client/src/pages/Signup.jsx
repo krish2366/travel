@@ -27,6 +27,10 @@ export default function TravelSignupPage() {
     }));
   };
 
+  const handleGoogleLogin = () =>{
+    window.location.href = 'http://localhost:5000/users/google';
+  };
+
   const handleSubmit = async () => {
     if (!formData.firstName || !formData.email || !formData.password) {
       alert('Please fill in all required fields');
@@ -322,27 +326,6 @@ export default function TravelSignupPage() {
                     </div>
                   </div>
 
-                  {/* Terms and Conditions */}
-                  {/* <div className="flex items-center">
-                    <input
-                      id="terms"
-                      name="terms"
-                      type="checkbox"
-                      required
-                      className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-                      I agree to the{' '}
-                      <Link to="/terms" className="text-purple-600 hover:text-purple-500 transition-colors">
-                        Terms of Service
-                      </Link>{' '}
-                      and{' '}
-                      <Link to="/privacy" className="text-purple-600 hover:text-purple-500 transition-colors">
-                        Privacy Policy
-                      </Link>
-                    </label>
-                  </div> */}
-
                   {/* Navigation Buttons */}
                   <div className="flex space-x-4">
                     <button
@@ -387,6 +370,7 @@ export default function TravelSignupPage() {
                     <button
                       type="button"
                       className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+                      onClick={handleGoogleLogin}
                     >
                       <svg className="w-5 h-5" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

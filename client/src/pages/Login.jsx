@@ -26,6 +26,10 @@ export default function TravelLoginPage() {
     randomBackground();
   },[]);
 
+  const handleGoogleLogin = () =>{
+    window.location.href = 'http://localhost:5000/users/google';
+  };
+
   const handleSubmit = async () => {
     if (!email || !password) {
       alert("Please fill in all fields");
@@ -206,6 +210,7 @@ export default function TravelLoginPage() {
                 <button
                   type="button"
                   className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+                  onClick={ handleGoogleLogin }
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
