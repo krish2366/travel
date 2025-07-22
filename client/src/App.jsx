@@ -7,6 +7,9 @@ import TripDetails from "./pages/TripDetail";
 import BookingPage from "./pages/BookingPage";
 import Dashboard from "./pages/Dashboard";
 import OAuthCallback from "./pages/OAuthCallback";
+import MyBookings from "./pages/MyBookings";
+import NotFound from "./pages/NotFound";
+import AddTrip from "./pages/AddTrip";
 
 
 function App() {
@@ -18,10 +21,19 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/oauth/callback" element={<OAuthCallback />} />
         <Route path="/" element={<Dashboard />} />
+
+
+        <Route path="/addtrip" element={<AddTrip />} />
+
+        
         <Route path="/trips" element={<Trips />} />
         <Route path="/tripdetails" element={<TripDetails />} />
         <Route path="/booking" element={<BookingPage />} />
-        <Route path="*" element={<h1>404 - Not Found</h1>} />
+        <Route path="/mybookings" element={<MyBookings />} />
+
+
+
+        <Route path="*" element={<NotFound />} />
 
       </Routes>
     </Router>

@@ -5,13 +5,16 @@ const Trip = require("../models/Trip");
 
 exports.createTrip = async (req, res) => {
   try {
-    const { title, location, price, duration, category, itinerary } = req.body;
+      console.log(req.files);
+    const { title, location, price, duration, category } = req.body;
+    const itinerary = JSON.parse(req.body.itinerary);
     const imageUrls = req.files ? 
                                 req.files.map((file) => ({
                                     url : file.path,
                                     public_id : file.filename
                                 })) : [];
 
+    console.log(itinerary)
     if(!imageUrls || imageUrls.length === 0) {
       return res.status(400).json({ 
         message: "At least one image is required"
@@ -25,7 +28,7 @@ exports.createTrip = async (req, res) => {
         duration,
         imageUrls,
         category: Array.isArray(category)? category : [category],
-        itinerary: JSON.parse(itinerary),
+        itinerary: itinerary,
         createdBy: req.user._id
     });
     await newTrip.save();

@@ -9,16 +9,7 @@ import {
   Train, 
   Package, 
   Star, 
-  User, 
-  Bell, 
-  Settings,
-  TrendingUp,
-  Clock,
-  Heart,
-  Camera,
   Globe,
-  Compass,
-  Sun,
   Mountain,
   Waves,
   TreePine,
@@ -27,16 +18,16 @@ import {
   CreditCard,
   Shield,
   ChevronRight,
-  Filter,
   ArrowRight
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useAuthStore } from '../store/useAuthStore';
+import Footer from '../components/Footer';
 
 export default function Dashboard() {
 
-  const {user} = useAuthStore();
-  console.log(user);
+  const { user , isAuthenticated} = useAuthStore();
+  console.log(user,isAuthenticated);
   const [activeTab, setActiveTab] = useState('flights');
   const [searchData, setSearchData] = useState({
     from: '',
@@ -158,14 +149,16 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen w-[99vw] bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
       <Navbar/>
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
         <div className="mb-8">
           <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-3xl p-8 text-white relative overflow-hidden">
             <div className="absolute inset-0 bg-black/20"></div>
             <div className="relative z-10">
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome back, John! 🌟</h1>
+              <h1 className="text-3xl md:text-4xl font-bold mb-2">
+                {
+                  isAuthenticated ? (`Welcome back, ${user.name} 🌟`) : ("Welcome")
+                }              
+              </h1>
               <p className="text-xl opacity-90 mb-6">Ready for your next adventure? Let's explore the world together.</p>
               <div className="flex flex-wrap gap-4">
                 {quickActions.map((action, index) => (
@@ -412,6 +405,7 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+      <Footer/>
     </div>
   );
 }

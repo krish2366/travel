@@ -5,7 +5,7 @@ const cloudinary  = require("./cloudinary");
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'travel',
+        folder: 'tripzy',
         allowedFormats: ['jpg', 'png', 'jpeg'],
         transformation: [{ width: 500, height: 500, crop: 'limit' }],
     }
