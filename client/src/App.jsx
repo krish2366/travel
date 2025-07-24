@@ -10,6 +10,7 @@ import OAuthCallback from "./pages/OAuthCallback";
 import MyBookings from "./pages/MyBookings";
 import NotFound from "./pages/NotFound";
 import AddTrip from "./pages/AddTrip";
+import Payment from "./pages/Payment";
 
 
 function App() {
@@ -27,11 +28,11 @@ function App() {
 
         
         <Route path="/trips" element={<Trips />} />
-        <Route path="/tripdetails" element={<TripDetails />} />
-        <Route path="/booking" element={<BookingPage />} />
+        <Route path="/tripdetails/:id" element={<TripDetails />} />
+        <Route path="/booking/:id" element={<BookingPage />} />
         <Route path="/mybookings" element={<MyBookings />} />
 
-
+        <Route path="/payment" element={<Payment/>}/>
 
         <Route path="*" element={<NotFound />} />
 

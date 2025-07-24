@@ -17,6 +17,10 @@ const bookingSchema = new mongoose.Schema({
     phone: String,
     travellers: String,
     notes: String,
+    cost:{
+        type: Number,
+        required: true
+    },
     isPaid:{
         type: Boolean,
         default: false

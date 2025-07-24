@@ -143,8 +143,7 @@ const AddTrip = () => {
       tripData.append('price', parseFloat(formData.price));
       tripData.append('duration', formData.duration);
       tripData.append('itinerary', JSON.stringify(itinerary));
-
-      tripData.append('category',(formData.category));
+      formData.category.forEach(cat => tripData.append('category', cat));
       imageUrls.forEach(img => tripData.append("imageUrls", img.file));
       
 

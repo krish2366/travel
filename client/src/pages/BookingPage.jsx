@@ -1,21 +1,37 @@
-import React, { useState } from 'react';
-import { ChevronLeft, MapPin, Calendar, Users, Phone, Mail, User, FileText, CreditCard } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ChevronLeft, MapPin, Calendar, Users, Phone, Mail, User, FileText, CreditCard, Plane, Globe } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const BookingPage = () => {
   // Sample trip data (would be passed as props or fetched based on trip ID)
-  const tripData = {
-    "_id": "64f16c3a1a92c3b4baf8a51c",
-    "title": "Manali Adventure Getaway",
-    "location": "Manali, Himachal Pradesh",
-    "price": 12999,
-    "duration": "5 Days / 4 Nights",
-    "imageUrls": [
-      {
-        "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
-        "public_id": "travel-app/trip1"
+  // const tripData = {
+  //   "_id": "64f16c3a1a92c3b4baf8a51c",
+  //   "title": "Manali Adventure Getaway",
+  //   "location": "Manali, Himachal Pradesh",
+  //   "price": 12999,
+  //   "duration": "5 Days / 4 Nights",
+  //   "imageUrls": [
+  //     {
+  //       "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
+  //       "public_id": "travel-app/trip1"
+  //     }
+  //   ]
+  // };
+  const { id } = useParams();
+  const [tripData, setTripData] = useState({});
+  useEffect(() =>{
+    const fetchTripDetails = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/trips/${id}`);
+        console.log(response.data.trip);
+        setTripData(response.data.trip);
+      } catch (error) {
+        console.error("Error fetching trip details:", error);
       }
-    ]
-  };
+    };
+    fetchTripDetails();
+  },[id]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -74,19 +90,40 @@ const BookingPage = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     const newErrors = validateForm();
+
+    const payload = {
+      trip: tripData._id,
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      travellers: formData.numberOfTravelers,
+      notes: formData.notes,
+      cost: calculateTotal(),
+      startDate: formData.startDate
+    }
     
     if (Object.keys(newErrors).length === 0) {
       // Proceed with booking
-      console.log('Booking data:', {
-        tripId: tripData._id,
-        ...formData,
-        totalCost: calculateTotal()
-      });
-      // Here you would typically redirect to payment page
-      alert('Proceeding to payment...');
+      console.log('Booking data:', payload);
+      try {
+        const res = await axios.post(`http://localhost:5000/bookings/book`,
+        payload,{
+          headers:{
+            Authorization:`Bearer ${localStorage.getItem('accessToken')}`
+          }
+        });  
+        alert('Proceeding to payment...');
+        console.log(res.data);
+        
+      } catch (error) {
+        console.error("Error during booking:", error);
+        alert('An error occurred while processing your booking. Please try again later.');
+        return;
+      }
+
     } else {
       setErrors(newErrors);
     }
@@ -103,6 +140,61 @@ const BookingPage = () => {
   const calculateTotal = () => {
     return calculateSubtotal() + calculateServiceFee();
   };
+
+  if (!tripData || Object.keys(tripData).length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-300 flex items-center justify-center p-4">
+        <div className="backdrop-blur-md bg-white/80 rounded-3xl p-8 border border-white/20 shadow-2xl max-w-md w-full text-center">
+          {/* Animated Travel Icons */}
+          <div className="flex justify-center space-x-4 mb-6">
+            <div className="animate-bounce">
+              <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-3 rounded-full">
+                <Plane className="w-6 h-6 text-white animate-pulse" />
+              </div>
+            </div>
+            <div className="animate-bounce" style={{ animationDelay: "0.2s" }}>
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-full">
+                <MapPin className="w-6 h-6 text-white animate-pulse" />
+              </div>
+            </div>
+            <div className="animate-bounce" style={{ animationDelay: "0.4s" }}>
+              <div className="bg-gradient-to-r from-pink-500 to-red-500 p-3 rounded-full">
+                <Globe className="w-6 h-6 text-white animate-pulse" />
+              </div>
+            </div>
+          </div>
+
+          {/* Loading Spinner */}
+          <div className="mb-6">
+            <div className="relative w-16 h-16 mx-auto">
+              <div className="absolute inset-0 border-4 border-blue-200 rounded-full"></div>
+              <div className="absolute inset-0 border-4 border-transparent border-t-blue-500 border-r-purple-500 rounded-full animate-spin"></div>
+            </div>
+          </div>
+
+          {/* Loading Text */}
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-800 to-purple-600 bg-clip-text text-transparent mb-2">
+              Loading Trip Details
+            </h2>
+            <p className="text-gray-600 animate-pulse">
+              Preparing your amazing journey...
+            </p>
+          </div>
+
+          {/* Loading Progress Bar */}
+          <div className="w-full bg-white/50 rounded-full h-2 mb-4 overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-full rounded-full animate-pulse"></div>
+          </div>
+
+          {/* Fun Loading Messages */}
+          <div className="text-sm text-gray-500 animate-pulse">
+            <p>✈️ Exploring destinations...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-[99vw] bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-300">

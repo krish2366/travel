@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, MapPin, Clock, Star, Users, Camera, Mountain, Waves, Sun, Snowflake, Heart } from 'lucide-react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Trips() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -7,114 +9,31 @@ export default function Trips() {
   const [priceRange, setPriceRange] = useState('All');
   const [sortBy, setSortBy] = useState('popular');
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedTrip, setSelectedTrip] = useState(null);
   const [favorites, setFavorites] = useState([]);
+  const [allTrips, setAllTrips] = useState([]);
 
-  // Sample trip data
-  const allTrips = [
-    {
-      "_id": "64f16c3a1a92c3b4baf8a51c",
-      "title": "Manali Adventure Getaway",
-      "location": "Manali, Himachal Pradesh",
-      "price": 12999,
-      "duration": "5 Days / 4 Nights",
-      "imageUrls": [
-        {
-          "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
-          "public_id": "travel-app/trip1"
-        }
-      ],
-      "category": ["Adventure", "Winter"],
-      "rating": 4.8,
-      "reviews": 234,
-      "groupSize": "2-12 people"
-    },
-    {
-      "_id": "64f16c3a1a92c3b4baf8a52d",
-      "title": "Goa Beach Paradise",
-      "location": "Goa, India",
-      "price": 8999,
-      "duration": "4 Days / 3 Nights",
-      "imageUrls": [
-        {
-          "url": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&q=80",
-          "public_id": "travel-app/trip2"
-        }
-      ],
-      "category": ["Beach", "Relaxation"],
-      "rating": 4.6,
-      "reviews": 189,
-      "groupSize": "2-8 people"
-    },
-    {
-      "_id": "64f16c3a1a92c3b4baf8a53e",
-      "title": "Rajasthan Royal Heritage",
-      "location": "Jaipur, Rajasthan",
-      "price": 15999,
-      "duration": "6 Days / 5 Nights",
-      "imageUrls": [
-        {
-          "url": "https://images.unsplash.com/photo-1599661046827-dacde6976549?w=800&q=80",
-          "public_id": "travel-app/trip3"
-        }
-      ],
-      "category": ["Heritage", "Culture"],
-      "rating": 4.9,
-      "reviews": 312,
-      "groupSize": "2-15 people"
-    },
-    {
-      "_id": "64f16c3a1a92c3b4baf8a54f",
-      "title": "Kerala Backwaters Cruise",
-      "location": "Alleppey, Kerala",
-      "price": 11999,
-      "duration": "3 Days / 2 Nights",
-      "imageUrls": [
-        {
-          "url": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&q=80",
-          "public_id": "travel-app/trip4"
-        }
-      ],
-      "category": ["Nature", "Relaxation"],
-      "rating": 4.7,
-      "reviews": 156,
-      "groupSize": "2-6 people"
-    },
-    {
-      "_id": "64f16c3a1a92c3b4baf8a560",
-      "title": "Leh Ladakh Expedition",
-      "location": "Leh, Ladakh",
-      "price": 22999,
-      "duration": "8 Days / 7 Nights",
-      "imageUrls": [
-        {
-          "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
-          "public_id": "travel-app/trip5"
-        }
-      ],
-      "category": ["Adventure", "Mountain"],
-      "rating": 4.9,
-      "reviews": 89,
-      "groupSize": "4-10 people"
-    },
-    {
-      "_id": "64f16c3a1a92c3b4baf8a571",
-      "title": "Andaman Island Escape",
-      "location": "Port Blair, Andaman",
-      "price": 18999,
-      "duration": "5 Days / 4 Nights",
-      "imageUrls": [
-        {
-          "url": "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80",
-          "public_id": "travel-app/trip6"
-        }
-      ],
-      "category": ["Beach", "Adventure"],
-      "rating": 4.8,
-      "reviews": 278,
-      "groupSize": "2-12 people"
+  const navigate = useNavigate();
+  
+
+  useEffect(() =>{
+    try {
+      const fetchTrips = async() =>{
+        const res = await axios.get('http://localhost:5000/trips');
+        const trips = res.data;
+        setAllTrips(trips.trips);
+        console.log(trips);
+      }
+      fetchTrips();
+
+    } catch (error) {
+      console.error("Error fetching trips:", error);
+      alert("Failed to fetch trips. Please try again later.");      
     }
-  ];
+  },[])
+
+  const handleNavigate = (id) => {
+    navigate(`/tripdetails/${id}`);
+  }
 
   // Filter trips based on search and filters
   const filteredTrips = allTrips.filter(trip => {
@@ -328,13 +247,13 @@ export default function Trips() {
                   </div>
                   <div className="flex items-center space-x-1 text-sm text-gray-600">
                     <Users className="w-4 h-4" />
-                    <span>{trip.groupSize}</span>
+                    <span>{"2-6"}</span>
                   </div>
                 </div>
 
                 <div className="flex space-x-3">
                   <button
-                    onClick={() => setSelectedTrip(trip)}
+                    onClick={() => handleNavigate(trip._id)}
                     className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
                   >
                     View Details
@@ -348,7 +267,7 @@ export default function Trips() {
           ))}
         </div>
 
-        {/* No Results */}
+        {/* No Results for filter */}
         {sortedTrips.length === 0 && (
           <div className="text-center py-12">
             <div className="text-gray-500 text-lg mb-4">No trips found matching your criteria</div>
@@ -365,81 +284,6 @@ export default function Trips() {
           </div>
         )}
       </div>
-
-      {/* Trip Detail Modal */}
-      {selectedTrip && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div className="relative h-64">
-              <img
-                src={selectedTrip.imageUrls[0].url}
-                alt={selectedTrip.title}
-                className="w-full h-full object-cover"
-              />
-              <button
-                onClick={() => setSelectedTrip(null)}
-                className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            
-            <div className="p-6 overflow-y-auto max-h-[60vh]">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">{selectedTrip.title}</h2>
-                  <div className="flex items-center space-x-1 text-gray-600">
-                    <MapPin className="w-4 h-4" />
-                    <span>{selectedTrip.location}</span>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold text-blue-600">₹{selectedTrip.price.toLocaleString()}</div>
-                  <div className="text-sm text-gray-600">{selectedTrip.duration}</div>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="flex items-center space-x-1">
-                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  <span className="font-medium">{selectedTrip.rating}</span>
-                  <span className="text-gray-600">({selectedTrip.reviews} reviews)</span>
-                </div>
-                <div className="flex items-center space-x-1 text-gray-600">
-                  <Users className="w-4 h-4" />
-                  <span>{selectedTrip.groupSize}</span>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-3">Categories</h3>
-                <div className="flex flex-wrap gap-2">
-                  {selectedTrip.category.map((cat, index) => {
-                    const IconComponent = getCategoryIcon(cat);
-                    return (
-                      <div key={index} className="bg-blue-100 px-3 py-1 rounded-full text-blue-800 text-sm flex items-center space-x-1">
-                        <IconComponent className="w-3 h-3" />
-                        <span>{cat}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="flex space-x-3">
-                <button className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                  Book Now
-                </button>
-                <button className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                  Share
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@ const Booking = require('../models/Booking.js');
 
 
 exports.createBooking = async (req,res) =>{
-    const { trip, name, email, phone, travellers, notes, startDate } = req.body;
+    const { trip, name, email, phone, travellers, notes, cost, startDate } = req.body;
     const user = req.user._id;
 
     try {
@@ -15,6 +15,7 @@ exports.createBooking = async (req,res) =>{
             phone,
             travellers,
             notes,
+            cost: parseFloat(cost),
             startDate
         });
         await newBooking.save();
